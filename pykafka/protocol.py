@@ -1119,7 +1119,8 @@ class OffsetCommitRequest(Request):
         struct.pack_into(fmt, output, offset,
                          len(self.consumer_group), self.consumer_group,
                          self.consumer_group_generation_id,
-                         len(self.consumer_id), self.consumer_id,
+                         len(self.consumer_id),
+                         self.consumer_id.encode('utf-8'),
                          len(self._reqs))
 
         offset += struct.calcsize(fmt)
@@ -1138,7 +1139,8 @@ class OffsetCommitRequest(Request):
                 pack_args = [fmt, output, offset, metalen]
                 if metalen != -1:
                     fmt += '%ds' % metalen
-                    pack_args = [fmt, output, offset, metalen, metadata]
+                    pack_args = [fmt, output, offset, metalen,
+                                 metadata.encode('utf-8')]
                 struct.pack_into(*pack_args)
                 offset += struct.calcsize(fmt)
         return output
